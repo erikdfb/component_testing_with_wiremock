@@ -16,7 +16,7 @@ public class WireMockTests : IDisposable
         _wireMockServer = WireMockServer.Start();
 
         // Create a new HttpClient instance with the base URL of our WireMock server
-        _httpClient = new HttpClient { BaseAddress = new Uri(_wireMockServer.Url) };
+        _httpClient = new HttpClient { BaseAddress = new Uri(_wireMockServer.Urls[0]) };
     }
 
     [Fact]
