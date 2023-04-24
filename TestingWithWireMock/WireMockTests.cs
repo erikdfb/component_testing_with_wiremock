@@ -23,24 +23,21 @@ public class WireMockTests : IDisposable
     public async Task Get_Endpoint_Returns_Success()
     {
         // Arrange
-        const string expectedResponse = "Hello, World!";
-
-        // Set up a WireMock stub for our API endpoint
         _wireMockServer
             .Given(Request.Create()
-                .WithPath("/api/hello")
+                .WithPath("/api/users")
                 .UsingGet())
             .RespondWith(Response.Create()
                 .WithStatusCode(HttpStatusCode.OK)
-                .WithBody(expectedResponse));
+                .WithBody("{\"Users\":[]}"));
 
         // Act (use a HttpClient which connects to the URL where WireMock.Net is running)
-        var response = await _httpClient.GetAsync("/api/hello");
+        var response = await _httpClient.GetAsync("/api/users");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var responseContent = await response.Content.ReadAsStringAsync();
-        Assert.Equal(expectedResponse, responseContent);
+        Assert.Equal("{\"Users\":[]}", responseContent);
     }
 
     [Fact]
@@ -71,8 +68,8 @@ public class WireMockTests : IDisposable
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
-        var responseBody = await response.Content.ReadAsStringAsync();
-        var createdUser = JsonConvert.DeserializeObject<User>(responseBody);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var createdUser = JsonConvert.DeserializeObject<User>(responseContent);
 
         Assert.Equal(1, createdUser.Id);
         Assert.Equal("John Doe", createdUser.Name);
